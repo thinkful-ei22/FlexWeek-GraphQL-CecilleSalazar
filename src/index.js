@@ -33,7 +33,7 @@ const resolvers = {
   Query: {
     info: () => `This is the API of a Hackernews Clone`,
 
-    feed: () => links,
+    feed: (_, { first }) => first === undefined ? links : links.slice(0, first),
   },
   Mutation: {
     post: (root, args) => {
@@ -47,14 +47,21 @@ const resolvers = {
     },
     update: (root, args) => {
       links.map(link => {
-        console.log('This is link ID', link.id)
-        console.log('This is args ID', args.id)
         if(link.id === args.id) {
           link.description = args.description;
           link.url = args.url;
           return link;
         }
       });
+    },
+    delete: (root, args) => {
+      links.map(link => {
+        if(link.id === args.id) {
+          const linkIndex = links.indexOf(link);
+          links.splice(linkIndex, 1);
+          return link;
+        }
+      })
     }
   }
 }
